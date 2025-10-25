@@ -1,0 +1,51 @@
+<div class="dash">
+   <div class="left">
+      <div class="sidebar">
+        <div class="menu">
+          <h2>Bienvenida <span class="color">{{ usucod }}</span><br> perfil: <span class="color">{{ perfil }}</span></h2>
+          <button (click)="logout()">Desconectarse</button>
+        </div>
+
+        <div class="drop-down-menu">
+          <div class="menu">
+            <a class="choice">Proveedores</a>
+            <div class="menu-content">
+              <div class="menu-item">
+                <a class="acTer" [class.disabled]="isDisabled('acTer')" (click)="proveedorees()">Gestión de Proveedores</a>
+                <a class="acCoTer" [class.disabled]="isDisabled('acCoTer')">Consulta de Proveedores</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu">
+            <a class="choice">Gestion de credito</a>
+            <div class="menu-content">
+              <div class="menu-item">
+                <a class="acGBS" [class.disabled]="isDisabled('acGBS')">Bolsas de crédito</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="menu">
+            <a class="choice">Contabilización</a>
+            <div class="menu-content">
+              <div class="menu-item">
+                <a class="acFac" [class.disabled]="isDisabled('acFac')" (click)="navigateTo('acFac')">Gestión de Facturas</a>
+                <a class="acFacC" [class.disabled]="isDisabled('acFacC')">Consulta de Facturas</a>
+                <a class="acMCon" [class.disabled]="isDisabled('acMCon')">Monitor de contabilización</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+   </div> 
+
+    <div class="right">
+      <div class="dashboard">
+        <div class="header-with-logo">
+          <img [src]="logoPath" alt="Logo" class="login-logo">
+          <h1>Panel Principal</h1>
+        </div>
+        <p>Bienvenido al panel principal de la aplicación.</p>
+      </div>
+</div>

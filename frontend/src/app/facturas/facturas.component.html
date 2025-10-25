@@ -1,0 +1,295 @@
+<div class="facturas-page">
+    <div 
+        class="sidebar-backdrop" 
+        *ngIf="!sidebar.collapsed" 
+        (click)="sidebar.collapsed = true"
+    >
+    </div>
+    <app-sidebar #sidebar></app-sidebar>
+    <div class="facturas-container" [class.blurred]="!sidebar.collapsed">
+        <h2>Lista de Facturas</h2> 
+        <div class="facturas-search">   
+            <form class="search-form">
+                <input 
+                    type="text" 
+                    class="search-bar" 
+                    placeholder="Buscar factura" 
+                    name="search"
+                    [(ngModel)]="searchQuery"
+                >
+                <div class="search-options">
+                    <label for="registro" class="ej-factura">Ej Factura</label>
+                    <input 
+                        type="text" 
+                        name="factura" 
+                        class="option-search" 
+                        placeholder="Ingrese EJE"
+                        [(ngModel)]="facturaSearch"
+                        maxlength="4"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        (input)="onEjeInput($event)"
+                    />
+                    <label for="registro">C.Gestor</label>
+                    <input 
+                        type="text" 
+                        name="Gestor" 
+                        class="option-search" 
+                        placeholder="Ingrese Centro Gestor"
+                        [(ngModel)]="centroGestor"
+                        maxlength="4"
+                        pattern="[A-Za-z0-9]*"
+                        style="text-transform: uppercase;"
+                        (input)="onCentroGestorInput($event)"
+                    />
+                </div>
+            </form>
+            <div class="more-search-options">
+                <div class="fecha">
+                    <p>Fecha</p>
+                    <div class="choice">
+                        <input 
+                            type="radio" 
+                            name="fecha-option" 
+                            class="fecha-dato" 
+                            [(ngModel)] = "fechaTipo"
+                            value="registro"
+                        > Registro
+                    </div>
+                    <div class="choice">
+                        <input 
+                            type="radio" 
+                            name="fecha-option" 
+                            class="fecha-dato" 
+                            [(ngModel)] = "fechaTipo"
+                            value="factura"
+                        > 
+                        Factura
+                    </div>
+                    <div class="choice">
+                        <input 
+                            type="radio" 
+                            name="fecha-option" 
+                            class="fecha-dato" 
+                            [(ngModel)] = "fechaTipo"
+                            value="contable"
+                        > 
+                        Contable
+                    </div>
+                    <div class="fecha-dates">
+                        <input 
+                            type="date" 
+                            name="desde" 
+                            class="fecha-dato" 
+                            [(ngModel)] = "fromDate"
+                        > 
+                        Desde
+                        <input 
+                            type="date" 
+                            name="hasta" 
+                            class="fecha-dato" 
+                            [(ngModel)] = "toDate"
+                        > 
+                        Hasta
+                    </div>
+                </div>
+                <div class="estado">
+                    <p>Estado</p>
+                    <div class="option">
+                        <input 
+                            type="radio" 
+                            name="estado" 
+                            class="fecha-dato"
+                            [(ngModel)] = "estadoTipo"
+                            value="contabilizadas" 
+                        > 
+                        Contabilizadas
+                    </div>
+                    <div class="option">
+                        <input 
+                            type="radio" 
+                            name="estado" 
+                            class="fecha-dato" 
+                            [(ngModel)] = "estadoTipo"
+                            value="no-contabilizadas"
+                        > 
+                        No Contabilizadas
+                    </div>
+                    <div class="option">
+                        <input 
+                            type="radio" 
+                            name="estado" 
+                            class="fecha-dato" 
+                            [(ngModel)] = "estadoTipo"
+                            value="aplicadas"
+                        > 
+                        Ptes. Aplicadas
+                    </div>
+                    <div class="option">
+                        <input 
+                            type="radio" 
+                            name="estado" 
+                            class="fecha-dato" 
+                            [(ngModel)] = "estadoTipo"
+                            value="sin-aplicadas" 
+                        > 
+                        Ptes. Sin aplicar
+                    </div>
+                    <div class="option">
+                        <input 
+                            type="radio" 
+                            name="estado" 
+                            class="fecha-dato" 
+                            checked
+                        > 
+                        Todas
+                    </div>
+                </div>
+            </div>  
+        </div>
+        <h1 style="margin: 2%; font-family: inherit; color: red; font-size: inherit;">{{ filterFacturaMessage }}</h1>
+        <div class="btns">
+            <button type="button" class="search-button" (click)="filterFacturas()">Buscar</button>
+            <button type="button" class="search-button" (click)="forgetAll()">Volver</button>
+        </div>
+
+        <div class="facturas-download">
+            <button class="download-btn" (click)="DownloadPDF()">Descargar como PDF</button>
+            <button class="download-btn" (click)="DownloadCSV()">Descargar como CSV</button>
+        </div>
+
+        <div class="facturas-list">
+            <h1 style="font-family: inherit; color: red; font-size: inherit;" id="error">{{facturaMessage}}</h1>
+            <table class="facturas-table">
+                <thead>
+                    <tr>
+                        <th>Número Registro</th>
+                        <th>Fecha contable</th>
+                        <th>ADO</th>
+                        <th>R.C.F</th>
+                        <th>Núm. Factura</th>
+                        <th>Proveedor</th>
+                        <th>Fecha Factura</th>
+                        <th>C.gestor</th>
+                        <th>F.Registro</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of paginatedFacturas">
+                        <td>{{ p.facnum }}</td>
+                        <td (click)="showDetails(p)" style="cursor: pointer;">{{ p.facfco }}</td>
+                        <td>{{ p.facado }}</td>
+                        <td>{{ p.factdc || p.facann || p.facfac  }}</td>
+                        <td>{{ p.facdoc }}</td>
+                        <td>{{ p.tercod  }}</td>
+                        <td>{{ p.facdat }}</td>
+                        <td>{{ p.cgecod }}</td>
+                        <td>{{ p.facfre }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="pagination-controls">
+                <button (click)="prevPage()" [disabled]="page === 0">Anterior</button>
+                <span>Página</span>
+                <input
+                type="number"
+                min="1"
+                [max]="totalPages"
+                [value]="page + 1"
+                (change)="goToPage($event)"
+                class="pagination-input"
+                />
+                <span>de {{ totalPages }}</span>
+                <button (click)="nextPage()" [disabled]="page + 1 >= totalPages">Siguiente</button>
+            </div>
+            <div class="modal-backdrop" *ngIf="selectedFacturas" (click)="closeDetails()"></div>
+            <div class="display" >
+                <div class="modal" *ngIf="selectedFacturas">
+                    <button class="close-btn-fct" (click)="closeDetails()">×</button>
+                    <h3>Detalles de Factura</h3>
+
+                    <div class="modal-row">
+                        <div class="modal-col">
+                            <strong>Número Registro:</strong>
+                            <h1>{{ selectedFacturas.facnum }}</h1>
+                        </div>
+                        <div class="modal-col">
+                            <strong>F.contable:</strong>
+                            <h1>{{ selectedFacturas.facfco }}</h1>
+                        </div>
+                        <div>
+                            <strong>ADO:</strong>
+                            <h1>{{ selectedFacturas.facado }}</h1>
+                        </div>
+                        <div>
+                            <strong>Total Factura:</strong>
+                            <h1>{{ selectedFacturas.facimp }}</h1>
+                        </div>
+                    </div>
+
+                    <div class="modal-row">
+                        <div>
+                            <strong>R.C.F:</strong>
+                            <h1>{{ selectedFacturas.facfac }}</h1>
+                            <h1>{{ selectedFacturas.facann }}</h1>
+                            <h1>{{ selectedFacturas.factdc }}</h1>
+                        </div>
+                        <div>
+                            <strong>Núm.Factura:</strong>
+                            <h1>{{ selectedFacturas.facdoc }}</h1>
+                        </div>
+                        <div>
+                            <strong>Aplicado:</strong>
+                            <h1>{{ selectedFacturas.faciec }}</h1>
+                        </div>
+                    </div>
+
+                    <div class="modal-row">
+                        <div>
+                            <strong>Proveedor:</strong>
+                            <h1>{{ selectedFacturas.tercod }}</h1>
+                            <h1>{{ selectedFacturas.ternom }}</h1> 
+                        </div>
+                        <div>
+                            <strong>Apl. diferencias:</strong>
+                            <h1>{{ selectedFacturas.facidi }}</h1>
+                        </div>
+                    </div>
+
+                    <div class="modal-row">
+                        <div>
+                            <strong>NIF</strong>
+                            <h1>{{selectedFacturas.ternif }}</h1>
+                        </div>
+                        <div>
+                            <strong>Fecha Factura</strong>
+                            <h1>{{ selectedFacturas.facdat }}</h1>
+                        </div>
+                        <div>
+                            <strong>C.Gestor</strong>
+                            <h1>{{ selectedFacturas.cgecod }}</h1>
+                        </div>
+                        <div>
+                            <strong>Pte.Aplicar</strong>
+                            <h1>{{ getPendingApply(selectedFacturas) }}</h1>
+                        </div>
+                    </div>
+
+                    <div class="modal-row">
+                        <div>
+                            <strong>Des.Fact/ADO:</strong>
+                            <h1>{{ selectedFacturas.factxt }}</h1>  
+                        </div>
+                    </div>
+
+                    <div class="modal-row">
+                        <div>
+                            <strong>Observaciones:</strong>
+                            <h1>{{ selectedFacturas.facobs }}</h1>          
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

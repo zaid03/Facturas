@@ -1,0 +1,460 @@
+body, html {
+  overflow-x: hidden;
+}
+
+.facturas-page {
+    display: flex;
+    min-height: 100vh;
+    background: #f0f0f0;
+    font-family: "Raleway", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif;
+}
+
+app-sidebar {
+    flex-shrink: 0;
+    z-index: 2000;
+}
+
+.sidebar-backdrop {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1500;
+}
+
+.facturas-container.blurred {
+    filter: blur(1.2px);
+    pointer-events: none;
+    user-select: none;
+}
+
+.facturas-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    background: #f0f0f0;
+    padding: 0 0 40px 0;
+    min-height: 100vh;
+    z-index: 1;
+}
+
+.facturas-container h2 {
+    margin: 10px;
+    color: #1c5d8c;
+}
+
+.facturas-search {
+    margin-top: 2%;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+    background: transparent;
+}
+
+.search-form {
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.search-bar{
+    width: 290px;
+}
+
+.option-search{
+    width: 170px;
+}
+
+.search-bar, .option-search {
+    padding: 10px 14px;
+    border-radius: 20px;
+    border: 1px solid #bbb;
+    font-size: 16px;
+    background: #f7f7f7;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    height: 20px;
+}
+
+.search-bar:focus, .option-search:focus {
+    border-color: #094fa3;
+    outline: none;
+    background: #fff;
+}
+
+.search-options {
+    margin: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.btns{
+    display: flex;
+    gap: 10px;
+}
+
+.search-button {
+    background-color: #094fa3;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.search-button:hover{
+    background-color: #0b4f8a;
+}
+
+.more-search-options{
+    width: 45%;
+    display: flex;
+}
+
+.choice, .option{
+    margin-bottom: 10px;
+}
+
+.fecha p, .estado p{
+    font-family: "Raleway", "Helvetica", "Tahoma", "Geneva", "Arial", sans-serif !important;
+    text-align: center;
+    padding: 10px;
+}
+
+input.fecha-dato[type="radio"] {
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  vertical-align: middle;
+  accent-color: #094fa3;
+  -webkit-appearance: radio;
+  appearance: radio;
+}
+
+.more-search-options .fecha-dates {
+    margin: 10px;
+    gap: 10px;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #222;
+}
+
+.more-search-options .fecha-dates input.fecha-dato[type="date"] {
+    padding: 2px 2px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid #d0d0d0;
+    background: #fff;
+    color: #222;
+    font-family: inherit;
+    font-size: inherit;
+    margin-right: 6px;
+    margin-bottom: 10px;
+}
+
+.more-search-options .fecha-dates input.fecha-dato[type="date"]:focus {
+    outline: none;
+    border-color: #094fa3;
+    box-shadow: 0 0 0 4px rgba(9,79,163,0.06);
+}
+
+.more-search-options .btns{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.estado{
+    width: 100%;
+}
+
+.facturas-download {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    margin: 16px 0 24px 0;
+}
+
+.download-btn {
+    background: #094fa3;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(41,128,185,0.08);
+}
+
+.download-btn:hover {
+    background: #0b4f8a;
+    box-shadow: 0 4px 16px rgba(41,128,185,0.12);
+}
+
+.facturas-list {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 14px;
+    overflow: hidden;
+}
+
+.facturas-table {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    padding: 18px;
+    font-family: inherit;
+    width: 900px;
+    border-collapse: collapse;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+
+.facturas-table thead th {
+    border: 1px solid #e6edf3;
+    padding: 10px 12px;
+    text-align: left;
+    background: #f7f7f9;
+    color: #1c5d8c;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.facturas-table tbody td {
+    border: 1px solid #f0f5f9;
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: middle;
+    font-size: 14px;
+    color: #333;
+}
+
+.facturas-table tbody tr:nth-child(even){
+    background-color: #fbfdff;
+}
+
+.facturas-table tbody tr:hover{
+    background-color: #f0f7ff;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 20px 0;
+    font-family: inherit;
+}
+
+.pagination-controls button {
+    background-color: #094fa3;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.pagination-controls button:hover {
+    background-color: #0b4f8a;
+}
+
+.pagination-controls button:disabled{
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.pagination-controls span {
+    font-size: 15px;
+    color: #444;
+    font-family: inherit;
+}
+
+.pagination-input {
+    width: 48px;
+    padding: 4px 6px;
+    font-size: 15px;
+    border-radius: 4px;
+    border: 1px solid #bbb;
+    text-align: center;
+    margin: 0 4px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(44, 62, 80, 0.35);
+  z-index: 1000;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+
+.display {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  pointer-events: none;
+}
+
+.modal {
+  position: fixed !important;
+  background: #fff;
+  padding: 24px 18px 18px 18px;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 1.5px 6px rgba(44,62,80,0.08);
+  width: 90%;
+  max-height: 70vh;
+  overflow-y: auto;
+  font-family: inherit;
+  animation: modalIn 0.22s cubic-bezier(.4,2,.6,1) both;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  z-index: 3000 !important;
+}
+
+.modal-row > div {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 0;
+  padding: 4px 0 0 0;
+}
+
+.modal-row > div strong {
+  margin-right: 0;
+  min-width: 70px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+
+.modal-row label {
+  margin-left: 50px !important;
+  margin-bottom: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(40px) scale(0.97);}
+  to   { opacity: 1; transform: none;}
+}
+
+.close-btn-fct {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: red;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal h3 {
+  font-size: 1.5rem;
+  color: #1c5d8c;
+  margin-bottom: 18px;
+  text-align: center;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.modal h1 {
+    font-size: 18px;
+    margin-bottom: 18px;
+    text-align: center;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.modal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: flex-start;
+  width: 100%;
+  justify-content: space-between;
+}
+
+
+.modal-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+  align-items: flex-start;
+  width: 100%;
+  justify-content: space-between;
+}
+
+
+.modal-row strong {
+  font-size: 0.98rem;
+  color: #1c5d8c;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.modal-row textarea {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 6px;
+  border: 1px solid #cfd8dc;
+  padding: 6px 8px;
+  font-size: 1rem;
+  resize: vertical;
+  background: #f7fafd;
+  margin-top: 2px;
+}
+.modal-row input[type="checkbox"] {
+  accent-color: #1c5d8c;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+}
+
+.modal-row label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1rem;
+  margin-top: 6px;
+}
+
+.modal-row input[type="text"] {
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #cfd8dc;
+  padding: 6px 8px;
+  font-size: 1rem;
+  background: #f7fafd;
+}
+
+.modal-row input[type="checkbox"].checkbox {
+  accent-color: #1c5d8c;
+  width: 18px;
+  height: 18px;
+  margin-right: 6px;
+  margin-top: 0;
+  margin-bottom: 0;
+}
