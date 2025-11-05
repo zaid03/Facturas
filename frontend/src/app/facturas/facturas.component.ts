@@ -35,21 +35,16 @@ export class FacturasComponent {
   ngOnInit(): void{
     this.facturaIsError = false;
     const entidad = sessionStorage.getItem('Entidad');
-    const eje = sessionStorage.getItem('selected_ejercicio');
-    const cge = sessionStorage.getItem("selected_centro_gestor");
-    try {
-      if (cge) {
-        const parsed = JSON.parse(cge);
-        if (parsed && typeof parsed === 'object') {
-          this.centroGestor = parsed.cgecod;
-        } else {
-          this.centroGestor = String(parsed);
-        }
-      }
-    } catch (e) {
-      console.warn('Failed to parse selected_centro_gestor:', e);
+    const eje = sessionStorage.getItem('EJERCICIO');
+    const cge = sessionStorage.getItem('CENTROGESTOR');
+
+    if (cge){
+      const parsed = JSON.parse(cge);
+      this.centroGestor = parsed.value
+      this.initialCentroGestor = this.centroGestor;
+      console.log(this.initialCentroGestor);
     }
-    this.initialCentroGestor = this.centroGestor;
+    
 
     if (entidad) {
       const parsed = JSON.parse(entidad);
@@ -306,7 +301,9 @@ export class FacturasComponent {
     const doAlphaNumSearch = hasLetters && hasDigits && searchRaw.length > NIF_MIN_DIGITS;
     const doShortDigitsExact = !hasLetters && hasDigits && searchDigits.length > 0 && searchDigits.length <= NIF_MIN_DIGITS;
     const doFallbackTextSearch = searchRaw.length > 0 && !doNifSearch && !doAlphaNumSearch && !doShortDigitsExact;
+    let searchApplied = false;
     if (facann || cgeq || doNifSearch || doAlphaNumSearch || doShortDigitsExact || doFallbackTextSearch) {
+      searchApplied = true;
       const source = (this.backupFacturas && this.backupFacturas.length) ? this.backupFacturas : this.facturas;
       const searchUp = searchRaw.toUpperCase();
       const filtered = source.filter(f => {
@@ -334,7 +331,6 @@ export class FacturasComponent {
           const valFacdoc = (f.facdoc ?? f.FACDOC ?? '').toString().toUpperCase();
           if (!(valTernom.includes(searchUp) || valFacdoc.includes(searchUp))) return false;
         }
-
         return true;
       });
 
@@ -350,9 +346,21 @@ export class FacturasComponent {
       else if (searchRaw) parts.push(`Search ignored (need more than ${NIF_MIN_DIGITS} digits or alphanumeric length > ${NIF_MIN_DIGITS})`);
     }
 
-    if (!desde && !hasta) {
-      this.filterFacturaMessage = 'Por favor rellene al menos una fecha (Desde o Hasta) cuando selecciona un tipo de fecha.';
-      return;
+    const hasDateInput = !!(desde || hasta);
+    if (!tipo) {
+      if (estado) {
+        this.filterFacturaMessage = 'Seleccione un tipo de fecha antes de elegir un estado.';
+        return;
+      }
+      if (hasDateInput) {
+        this.filterFacturaMessage = 'Seleccione un tipo de fecha antes de filtrar por fechas.';
+        return;
+      }
+      if (searchApplied) {
+        this.filterFacturaMessage = '';
+        return; 
+      }
+      this.filterFacturaMessage = 'test';
     }
     
     let datePart = '';
@@ -1071,7 +1079,7 @@ export class FacturasComponent {
         }
       }
     } else {
-      this.filterFacturaMessage = 'Tipo de fecha desconocido.';
+      this.filterFacturaMessage = 'Tipo de fecha requirida.';
     }
   }
 
