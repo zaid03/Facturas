@@ -174,6 +174,7 @@ input.fecha-dato[type="radio"] {
     width: 100%;
 }
 
+
 .facturas-download {
     display: flex;
     gap: 16px;
@@ -199,51 +200,49 @@ input.fecha-dato[type="radio"] {
 }
 
 .facturas-list {
-    width: 80%;
+    width: 99%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 14px;
-    overflow: hidden;
 }
 
-.facturas-table {
+.facturas-table,
+.albaranes-table {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    padding: 18px;
-    font-family: inherit;
-    width: 900px;
+    font-family: 'Open Sans Condensed', sans-serif;  
+    max-width: 99%;
     border-collapse: collapse;
     margin-bottom: 24px;
     overflow: hidden;
 }
 
-.facturas-table thead th {
+.facturas-table thead th,
+.albaranes-table thead th {
     border: 1px solid #e6edf3;
-    padding: 10px 12px;
-    text-align: left;
+    padding: 8px 12px;
+    text-align: center;
     background: #f7f7f9;
     color: #1c5d8c;
     font-size: 15px;
     font-weight: 700;
 }
 
-.facturas-table tbody td {
+.facturas-table tbody td,
+.albaranes-table tbody td {
     border: 1px solid #f0f5f9;
     padding: 10px 12px;
-    text-align: left;
+    text-align: center;
     vertical-align: middle;
-    font-size: 14px;
-    color: #333;
+    font-size: 15px;
+    color: #222;
+    font-weight: 600;
 }
 
-.facturas-table tbody tr:nth-child(even){
-    background-color: #fbfdff;
-}
-
-.facturas-table tbody tr:hover{
+.facturas-table tbody tr:hover,
+.albaranes-table tbody tr:hover{
     background-color: #f0f7ff;
 }
 
@@ -318,7 +317,7 @@ input.fecha-dato[type="radio"] {
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 1.5px 6px rgba(44,62,80,0.08);
   width: 90%;
-  max-height: 70vh;
+  max-height: 90vh;
   overflow-y: auto;
   font-family: inherit;
   animation: modalIn 0.22s cubic-bezier(.4,2,.6,1) both;
@@ -327,34 +326,6 @@ input.fecha-dato[type="radio"] {
   flex-direction: column;
   align-items: stretch;
   z-index: 3000 !important;
-}
-
-.modal-row > div {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 18px;
-  margin-bottom: 0;
-  padding: 4px 0 0 0;
-}
-
-.modal-row > div strong {
-  margin-right: 0;
-  min-width: 70px;
-  flex-shrink: 0;
-  align-self: flex-start;
-}
-
-.modal-row label {
-  margin-left: 50px !important;
-  margin-bottom: 0;
-  display: inline-flex;
-  align-items: center;
-}
-
-@keyframes modalIn {
-  from { opacity: 0; transform: translateY(40px) scale(0.97);}
-  to   { opacity: 1; transform: none;}
 }
 
 .close-btn-fct {
@@ -370,91 +341,239 @@ input.fecha-dato[type="radio"] {
 }
 
 .modal h3 {
-  font-size: 1.5rem;
-  color: #1c5d8c;
-  margin-bottom: 18px;
-  text-align: center;
-  letter-spacing: 1px;
-  font-weight: 600;
-}
-
-.modal h1 {
-    font-size: 18px;
-    margin-bottom: 18px;
+    margin: 10px;
+    color: #1c5d8c;
     text-align: center;
-    letter-spacing: 1px;
-    font-weight: 600;
 }
 
-.modal-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: flex-start;
-  width: 100%;
-  justify-content: space-between;
+.data{
+    margin-top: 10px;
+    display: flex;
 }
 
-
-.modal-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 8px;
-  align-items: flex-start;
-  width: 100%;
-  justify-content: space-between;
+.left{
+    width: 70%;
 }
 
-
-.modal-row strong {
-  font-size: 0.98rem;
-  color: #1c5d8c;
-  font-weight: 500;
-  margin-bottom: 2px;
+.right{
+    width: 30%;
 }
 
-.modal-row textarea {
-  width: 100%;
-  min-height: 48px;
-  border-radius: 6px;
-  border: 1px solid #cfd8dc;
-  padding: 6px 8px;
-  font-size: 1rem;
-  resize: vertical;
-  background: #f7fafd;
-  margin-top: 2px;
-}
-.modal-row input[type="checkbox"] {
-  accent-color: #1c5d8c;
-  width: 16px;
-  height: 16px;
-  margin-right: 6px;
+.first-row, 
+.second-row, 
+.third-row, 
+.fourth-row, 
+.fifth-row, 
+.sixth-row,
+.seventh-row {
+    display: flex;
+    margin: 10px;
 }
 
-.modal-row label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 1rem;
-  margin-top: 6px;
+.first-data, 
+.second-data, 
+.third-data, 
+.fourth-data,
+.seventh-data,
+.eighth-data,
+.ninth-data,
+.tenth-data,
+.eleventh-data,
+.twelfth-data,
+.thirteenth-data {
+    width: 100%;
+    height: auto;
+    margin-right: 2%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 1%;
 }
 
-.modal-row input[type="text"] {
-  width: 100%;
-  border-radius: 6px;
-  border: 1px solid #cfd8dc;
-  padding: 6px 8px;
-  font-size: 1rem;
-  background: #f7fafd;
+.fifth-data,
+.sixth-data {
+    width: 100%;
+    height: auto;
+    margin-right: 2%;
+    padding: 1%;
 }
 
-.modal-row input[type="checkbox"].checkbox {
-  accent-color: #1c5d8c;
-  width: 18px;
-  height: 18px;
-  margin-right: 6px;
-  margin-top: 0;
-  margin-bottom: 0;
+.first-data p, 
+.second-data p, 
+.third-data p, 
+.fourth-data p, 
+.fifth-data p, 
+.sixth-data p,
+.seventh-data p,
+.eighth-data p,
+.ninth-data p,
+.tenth-data p,
+.eleventh-data p,
+.twelfth-data p,
+.thirteenth-data p {
+    font-size: 14px;
+    font-weight: bold;
+    color: #1c5d8c;
+}
+
+.width{
+    width: 120px;
+}
+
+.margin{
+    margin-bottom: 10%;
+}
+
+.first-data input[type="text"], 
+.second-data input[type="text"], 
+.third-data input[type="text"], 
+.fourth-data input[type="text"], 
+.fifth-data input[type="text"], 
+.sixth-data input[type="text"],
+.sixth-data input[type="text"],
+.seventh-data input[type="text"],
+.eighth-data input[type="text"],
+.ninth-data input[type="text"],
+.tenth-data input[type="text"],
+.eleventh-data input[type="text"],
+.twelfth-data input[type="text"],
+.thirteenth-data input[type="text"]  {
+    border: 1px solid #1c5d8c;
+    padding: 8px 6px;
+    border-radius: 6px;
+    max-width: 400px;
+}
+
+.fifth-data input[type="text"] {
+    min-width: 85%;
+    max-width: 100% !important;
+}
+
+.first-data input[type="text"]:focus,
+.second-data input[type="text"]:focus,
+.third-data input[type="text"]:focus,
+.fourth-data input[type="text"]:focus, 
+.fifth-data input[type="text"]:focus, 
+.sixth-data input[type="text"]:focus,
+.seventh-data input[type="text"]:focus,
+.eighth-data input[type="text"]:focus,
+.ninth-data input[type="text"]:focus,
+.tenth-data input[type="text"]:focus,
+.eleventh-data input[type="text"]:focus,
+.twelfth-data input[type="text"]:focus,
+.thirteenth-data input[type="text"]:focus  {
+    border-color: #042b5a;
+    outline: none;
+    background: #fff;
+} 
+
+.detail-switch,
+.detail-switch-second {
+    display: flex;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.detail-switch button,
+.detail-switch-second button {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid #1d4ed8;
+    background: #fff;
+    color: #1d4ed8;   
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.detail-switch button.active,
+.detail-switch-second button.active {
+    background: #1d4ed8;
+    color: #fff;
+}
+
+.detail-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f9fafb;
+}
+
+.detail-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 1270px) {
+    .first-row,
+    .second-row, 
+    .third-row, 
+    .fourth-row, 
+    .fifth-row, 
+    .sixth-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin: 8px 0;
+  }
+
+  .first-data, 
+  .second-data, 
+  .third-data, 
+  .fourth-data, 
+  .fifth-data, 
+  .sixth-data {
+    width: 100%;
+    margin-right: 0;
+    padding: 8px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .first-data p, 
+  .second-data p, 
+  .third-data p, 
+  .fourth-data p, 
+  .fifth-data p, 
+  .sixth-data p {
+    text-align: left;
+    width: 100%;
+  }
+
+  .first-data input[type="text"],
+  .second-data input[type="text"],
+  .third-data input[type="text"],
+  .fourth-data input[type="text"],
+  .fifth-data input[type="text"],
+  .sixth-data input[type="text"] {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (min-width: 1700px) {
+    .facturas-list {
+        width: 95%;
+    }
+
+    .facturas-table {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .facturas-table tbody td {
+        font-size: 20px !important;
+    }
 }

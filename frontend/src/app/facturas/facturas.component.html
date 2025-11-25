@@ -35,12 +35,10 @@
                         type="text" 
                         name="Gestor" 
                         class="option-search" 
-                        placeholder="Ingrese Centro Gestor"
+                        placeholder="centro de gestión faltante"
                         [(ngModel)]="centroGestor"
                         maxlength="4"
-                        pattern="[A-Za-z0-9]*"
-                        style="text-transform: uppercase;"
-                        (input)="onCentroGestorInput($event)"
+                        disabled
                     />
                 </div>
             </form>
@@ -140,13 +138,13 @@
                             type="radio" 
                             name="estado" 
                             class="fecha-dato" 
-                            checked
                         > 
                         Todas
                     </div>
                 </div>
             </div>  
         </div>
+        <h1 style="font-family: inherit; color: blue; font-size: inherit; margin-bottom: 2%;">{{ estadoMessage }}</h1>
         <h1 style="margin: 2%; font-family: inherit; color: red; font-size: inherit;">{{ filterFacturaMessage }}</h1>
         <div class="btns">
             <button type="button" class="search-button" (click)="filterFacturas()">Buscar</button>
@@ -159,32 +157,45 @@
         </div>
 
         <div class="facturas-list">
-            <h1 style="font-family: inherit; color: red; font-size: inherit;" id="error">{{facturaMessage}}</h1>
+            <h1 style="margin: 10px; color: blue; font-size: inherit;" id="error">{{facturaMessageSuccess}}</h1>
+            <h1 style="margin: 10px; color: red; font-size: inherit;" id="error">{{facturaMessage}}</h1>
             <table class="facturas-table">
                 <thead>
                     <tr>
                         <th>Número Registro</th>
-                        <th>Fecha contable</th>
-                        <th>ADO</th>
-                        <th>R.C.F</th>
+                        <th>Código Prov.</th>
+                        <th>Nombre Proveedor</th>
+                        <th>NIF Prov.</th>
+                        <th>F. Registro</th>
+                        <th>Importe total</th>
                         <th>Núm. Factura</th>
-                        <th>Proveedor</th>
+                        <th>Año</th>
+                        <th>R.C.F.</th>
                         <th>Fecha Factura</th>
-                        <th>C.gestor</th>
-                        <th>F.Registro</th>
+                        <th>ADO</th>
+                        <th>Fecha contable</th>
+                        <th>Pte. Aplicar</th>
+                        <th>C.Gestor</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let p of paginatedFacturas">
                         <td>{{ p.facnum }}</td>
-                        <td (click)="showDetails(p)" style="cursor: pointer;">{{ p.facfco }}</td>
-                        <td>{{ p.facado }}</td>
-                        <td>{{ p.factdc || p.facann || p.facfac  }}</td>
+                        <td (click)="showDetails(p)" style="cursor: pointer;">{{ p.tercod }}</td>
+                        <td>{{ p.ternom }}</td>
+                        <td>{{ p.ternif }}</td>
+                        <td>{{ p.facfre | date:'yyyy-MM-dd'}}</td>
+                        <td>{{ p.facimp  }}</td>
                         <td>{{ p.facdoc }}</td>
-                        <td>{{ p.tercod  }}</td>
-                        <td>{{ p.facdat }}</td>
+                        <td>{{ p.facann }}</td>
+                        <td>{{ p.facfac }}</td>
+                        <td>{{ p.facdat | date:'yyyy-MM-dd' }}</td>
+                        <td>{{ p.facado }}</td>
+                        <td>{{ p.facfco | date:'yyyy-MM-dd' }}</td>
+                        <td>{{getPendingApply(p)}}</td>
                         <td>{{ p.cgecod }}</td>
-                        <td>{{ p.facfre }}</td>
+                        <td>{{ getStaus(p.facado, p.facimp, p.faciec, p.facidi) }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -208,87 +219,267 @@
                     <button class="close-btn-fct" (click)="closeDetails()">×</button>
                     <h3>Detalles de Factura</h3>
 
-                    <div class="modal-row">
-                        <div class="modal-col">
-                            <strong>Número Registro:</strong>
-                            <h1>{{ selectedFacturas.facnum }}</h1>
+                    <div class="data">
+                        <div class="left">
+                            <div class="first-row">
+                                <div class="first-data">
+                                    <p>Núm. Reg.</p>
+                                    <input type="text" [(ngModel)]="selectedFacturas.facnum" />
+                                </div>
+                                <div class="first-data">
+                                    <p>F.Contable</p>
+                                    <input type="text" [ngModel]="selectedFacturas.facfco | date:'yyyy-MM-dd'" />
+                                </div>
+                                <div class="first-data">
+                                    <p>ADO</p>
+                                    <input type="text" [(ngModel)]="selectedFacturas.facado" />
+                                </div>  
+                            </div>
+                            <div class="second-row">
+                                <div class="second-data">
+                                    <p>R.C.F:</p>
+                                    <input class="width" type="text" [(ngModel)]="selectedFacturas.facfac" />
+                                    <input class="width" type="text" [(ngModel)]="selectedFacturas.facann" />
+                                    <input class="width" type="text" [(ngModel)]="selectedFacturas.factdc" />
+                                </div>
+                                <div class="second-data">
+                                    <p>Núm.Factura:</p>
+                                    <input class="width" type="text" [(ngModel)]="selectedFacturas.facdoc" />
+                                </div>
+                            </div>
+                            <div class="third-row">
+                                <div class="third-data">
+                                    <p>Proveedor:</p>
+                                    <input type="text" [(ngModel)]="selectedFacturas.tercod" />
+                                    <input type="text" [(ngModel)]="selectedFacturas.ternom" style="width: 300px !important;"/>
+                                </div>
+                            </div>
+                            <div class="fourth-row">
+                                <div class="fourth-data">
+                                    <p>NIF</p>
+                                    <input type="text" [(ngModel)]="selectedFacturas.ternif" />
+                                </div>
+                                <div class="fourth-data">
+                                    <p>Fecha Factura</p>
+                                    <input type="text" [ngModel]="selectedFacturas.facdat | date:'yyyy-MM-dd'" />
+                                </div>
+                                <div class="fourth-data">
+                                    <p>C.Gestor</p>
+                                    <input type="text" [value]="selectedFacturas.cgecod" style="width: 40px;" readonly />
+                                </div>
+                            </div>
+                            <div class="fifth-row">
+                                <div class="fifth-data">
+                                    <p style="margin-bottom: 10px;">Des.Fact/ADO:</p>
+                                    <input type="text" [(ngModel)]="selectedFacturas.factxt" />
+                                </div>
+                                <div class="fifth-data">
+                                    <p style="margin-bottom: 10px;">F.Registro</p>
+                                    <input type="text" [ngModel]="selectedFacturas.facfre | date:'yyyy-MM-dd'" />
+                                </div>  
+                            </div>
+                            <div class="sixth-row">
+                                <div class="sixth-data">
+                                    <p style="margin-bottom: 10px;">Tipo de contrato</p>
+                                    <input class="width" type="text" [ngModel]="selectedFacturas.conctp" />
+                                </div>
+                                <div class="sixth-data">
+                                    <p style="margin-bottom: 10px;">Procedimiento de contacto</p>
+                                    <input class="width" type="text" [ngModel]="selectedFacturas.concpr" />
+                                </div>
+                                <div class="sixth-data">
+                                    <p style="margin-bottom: 10px;">Criterio de puntuación</p>
+                                    <input class="width" type="text" [ngModel]="selectedFacturas.conccr" />
+                                </div>
+                            </div>
+                            <div class="seventh-row">
+                                <div class="seventh-data">
+                                    <p style="margin-bottom: 10px;">Forma de pago</p>
+                                    <input class="width" type="text" [ngModel]="selectedFacturas.facfpg" />
+                                </div>
+                                <div class="seventh-data">
+                                    <p style="margin-bottom: 10px;">Ordinal de pago</p>
+                                    <input class="width" type="text" [ngModel]="selectedFacturas.facopg" />
+                                </div>
+                                <div class="seventh-data">
+                                    <p style="margin-bottom: 10px;">Tipo de pago</p>
+                                    <input class="width" type="text" [ngModel]="selectedFacturas.factpg" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="modal-col">
-                            <strong>F.contable:</strong>
-                            <h1>{{ selectedFacturas.facfco }}</h1>
-                        </div>
-                        <div>
-                            <strong>ADO:</strong>
-                            <h1>{{ selectedFacturas.facado }}</h1>
-                        </div>
-                        <div>
-                            <strong>Total Factura:</strong>
-                            <h1>{{ selectedFacturas.facimp }}</h1>
+                        <div class="right">
+                            <div class="eighth-data margin">
+                                <p style="margin-bottom: 10px;">Total Factura</p>
+                                <input class="width" type="text" [ngModel]="selectedFacturas.facimp | currency:'EUR':'symbol':'1.2-2':'es-ES'" />
+                            </div>
+                            <div class="ninth-data margin">
+                                <p>Aplicado:</p>
+                                <input class="width" type="text" [ngModel]="selectedFacturas.faciec | currency:'EUR':'symbol':'1.2-2':'es-ES'" style="width: 100px;" />
+                            </div>
+                            <div class="tenth-data margin">
+                                <p>Apl. diferencias:</p>
+                                <input class="width" type="text" [ngModel]="selectedFacturas.facidi | currency:'EUR':'symbol':'1.2-2':'es-ES'" />
+                            </div>
+                            <div class="eleventh-data margin">
+                                <p>Pte.Aplicar</p>
+                                <input class="width" type="text" [value]="getPendingApply(selectedFacturas) | currency:'EUR':'symbol':'1.2-2':'es-ES'" readonly />
+                            </div>
+                            <div class="twelfth-data margin">
+                                <p>Descuentos</p>
+                                <input class="width" type="text" [value]="selectedFacturas.facdto | currency:'EUR':'symbol':'1.2-2':'es-ES'" readonly />
+                            </div>
+                            <div class="thirteenth-data margin">
+                                <p>Observaciones:</p>
+                                <input class="width" type="text" [(ngModel)]="selectedFacturas.facobs" /> 
+                            </div>
                         </div>
                     </div>
+                    <div class="more-details">
+                        <div class="detail-switch"> 
+                            <button type="button"
+                                    [class.active]="detailView === 'Albaranes'"
+                                    (click)="detailView = 'Albaranes'">
+                                Albaranes
+                            </button>
+                            <button type="button"
+                                    [class.active]="detailView === 'Contabilización'"
+                                    (click)="detailView = 'Contabilización'">
+                                Datos Contabilización
+                            </button>
+                        </div>
 
-                    <div class="modal-row">
-                        <div>
-                            <strong>R.C.F:</strong>
-                            <h1>{{ selectedFacturas.facfac }}</h1>
-                            <h1>{{ selectedFacturas.facann }}</h1>
-                            <h1>{{ selectedFacturas.factdc }}</h1>
-                        </div>
-                        <div>
-                            <strong>Núm.Factura:</strong>
-                            <h1>{{ selectedFacturas.facdoc }}</h1>
-                        </div>
-                        <div>
-                            <strong>Aplicado:</strong>
-                            <h1>{{ selectedFacturas.faciec }}</h1>
-                        </div>
-                    </div>
+                        <div class="detail-grid" *ngIf="detailView === 'Albaranes'">
+                            <div class="detail-switch-second">
+                                <button type="button"
+                                        [class.active]="albaranesOptio === 'albaranes'"
+                                        (click)="setAlbaranesOptio('albaranes', selectedFacturas?.facnum)">
+                                    Albaranes
+                                </button>
+                                <button type="button"
+                                        [class.active]="albaranesOptio === 'aplicaciones'"
+                                        (click)="setAlbaranesOptio('aplicaciones', selectedFacturas?.facnum)">
+                                    Aplicaciones
+                                </button>
+                                <button type="button"
+                                    [class.active] = "albaranesOptio === 'descuentos'"
+                                    (click)="setAlbaranesOptio('descuentos', selectedFacturas?.facnum)">
+                                    Descuentos
+                                </button>
+                            </div>
 
-                    <div class="modal-row">
-                        <div>
-                            <strong>Proveedor:</strong>
-                            <h1>{{ selectedFacturas.tercod }}</h1>
-                            <h1>{{ selectedFacturas.ternom }}</h1> 
-                        </div>
-                        <div>
-                            <strong>Apl. diferencias:</strong>
-                            <h1>{{ selectedFacturas.facidi }}</h1>
-                        </div>
-                    </div>
+                            <div class="detail-switch-second-content">
+                                <ng-container [ngSwitch]="albaranesOptio">
+                                    <ng-container *ngSwitchCase="'albaranes'">
+                                        <h1 style="font-family: inherit; color: blue; font-size: inherit; margin-bottom: 2%; text-align: center;">{{moreInfoMessageSuccess}}</h1>
+                                        <h1 style="margin: 2%; font-family: inherit; color: red; font-size: inherit; text-align: center;">{{moreInfoMessageError}}</h1>
+                                        <div class="detail-card">
+                                            <table class="albaranes-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th><strong>Número albarán</strong></th>
+                                                        <th>Referencia</th>
+                                                        <th>Fecha</th>
+                                                        <th>Base imponible</th>
+                                                        <th>Solicitud</th>
+                                                        <th>Índice</th>
+                                                        <th>Observaciones</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let a of albaranes">
+                                                        <td>{{ a.albnun }}</td>
+                                                        <td>{{ a.albref }}</td>
+                                                        <td>{{ a.albdat | date:'yyyy-MM-dd' }}</td>
+                                                        <td>{{ a.albbim | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</td>
+                                                        <td>{{ a.solnum }}</td>
+                                                        <td>{{ a.solsub }}</td>
+                                                        <td>{{ a.albobs }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-container>
 
-                    <div class="modal-row">
-                        <div>
-                            <strong>NIF</strong>
-                            <h1>{{selectedFacturas.ternif }}</h1>
-                        </div>
-                        <div>
-                            <strong>Fecha Factura</strong>
-                            <h1>{{ selectedFacturas.facdat }}</h1>
-                        </div>
-                        <div>
-                            <strong>C.Gestor</strong>
-                            <h1>{{ selectedFacturas.cgecod }}</h1>
-                        </div>
-                        <div>
-                            <strong>Pte.Aplicar</strong>
-                            <h1>{{ getPendingApply(selectedFacturas) }}</h1>
-                        </div>
-                    </div>
+                                    <ng-container *ngSwitchCase="'aplicaciones'">
+                                        <h1 style="font-family: inherit; color: blue; font-size: inherit; margin-bottom: 2%; text-align: center;">{{moreInfoMessageSuccess}}</h1>
+                                        <h1 style="margin: 2%; font-family: inherit; color: red; font-size: inherit; text-align: center;">{{moreInfoMessageError}}</h1>
+                                        <div class="detail-card">
+                                            <table class="albaranes-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th><strong>Referencia</strong></th>
+                                                        <th>Económica</th>
+                                                        <th>Importe</th>
+                                                        <th>diferencias </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let a of apalicaciones">
+                                                        <td>{{ a.FDEREF }}</td>
+                                                        <td>{{ a.FDEECO }}</td>
+                                                        <td>{{ a.FDEIMP | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</td>
+                                                        <td>{{ a.FDEDIF | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-container>
 
-                    <div class="modal-row">
-                        <div>
-                            <strong>Des.Fact/ADO:</strong>
-                            <h1>{{ selectedFacturas.factxt }}</h1>  
+                                    <ng-container    *ngSwitchCase="'descuentos'">
+                                        <h1 style="font-family: inherit; color: blue; font-size: inherit; margin-bottom: 2%; text-align: center;">{{moreInfoMessageSuccess}}</h1>
+                                        <h1 style="margin: 2%; font-family: inherit; color: red; font-size: inherit; text-align: center;">{{moreInfoMessageError}}</h1>
+                                        <div class="detail-card">
+                                            <table class="albaranes-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Área</th>
+                                                        <th>Orgánica</th>
+                                                        <th>Programa</th>
+                                                        <th>Económica</th>
+                                                        <th>Base</th>
+                                                        <th>% Dto</th>
+                                                        <th>Importe Descuento</th>
+                                                        <th>Descripción</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let d of descuentos">
+                                                        <td>{{ d.FDTARE }}</td>
+                                                        <td>{{ d.FDTORG }}</td>
+                                                        <td>{{ d.FDTFUN }}</td>
+                                                        <td>{{ d.FDTECO }}</td>
+                                                        <td>{{ d.FDTBSE | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</td>
+                                                        <td>{{ d.FDTPRE | number:'1.1-1' }} %</td>
+                                                        <td>{{ d.FDTDTO | currency:'EUR':'symbol':'1.2-2':'es-ES' }}</td>
+                                                        <td>{{ d.FDTTXT }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <div class="detail-grid" *ngIf="detailView === 'Contabilización'">
+                            <div class="detail-card">
+                                <h4>Asignaciones recientes</h4>
+                                <p>Albarán 2024-004 · 325,00 €</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Última acción</h4>
+                                <p>Aplicación de diferencia · 2024-09-18</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Responsable</h4>
+                                <p>Unidad de Contabilidad</p>
+                            </div>
+                            <div class="detail-card">
+                                <h4>Notas</h4>
+                                <p>Factura pendiente de revisión documental.</p>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="modal-row">
-                        <div>
-                            <strong>Observaciones:</strong>
-                            <h1>{{ selectedFacturas.facobs }}</h1>          
-                        </div>
-                    </div>
-                </div>
+                </div> 
             </div>
         </div>
     </div>
