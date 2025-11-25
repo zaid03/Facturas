@@ -1330,5 +1330,4 @@ export class FacturasComponent {
       });
     }
   }
-
 }
