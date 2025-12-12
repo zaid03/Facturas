@@ -40,7 +40,8 @@
             <a class="choice">Mantenimiento</a>
             <div class="menu-content">
               <div class="menu-item">
-                <a class="Fam-Sub margin" (click)="navigateTo('familia')">Familia y subfamilia</a>
+                <a class="Fam-Sub" (click)="navigateTo('familia')">Familia y subfamilia</a>
+                <a class="cge margin" (click)="navigateTo('centroGestor')">Centro Gestor</a>
               </div>
             </div>
           </div>
@@ -55,5 +56,17 @@
           <h1>Panel Principal</h1>
         </div>
         <p>Bienvenido al panel principal de la aplicación.</p>
+        <h6>Conectado con:</h6>
+        <div class="parameters">
+          <div class="variable-names">
+            <h4>Entidad: {{ entcod }}</h4>
+            <h4>Ejercicio: {{ eje }}</h4>
+            <div class="cge-class">
+              <h4 class="margin">Centro gestor: {{ centroGestor }}</h4>
+              <button class="cge-btn" (click)="goToCge()">Cambiar Centro Gestor</button>
+            </div>
+            <button class="services-btn">Ver Servicios</button>
+          </div>
+        </div>
       </div>
 </div>

@@ -59,19 +59,52 @@ app-sidebar {
   z-index: 1500;
 }
 
+/* component styles */
+.familia-page,
+.centroGestor-page {
+  display: flex;
+  min-height: 100vh;
+  background: #f0f0f0;
+}
+
+.familia-container.blurred,
+.centroGestor-container.blurred {
+  filter: blur(1.2px);
+  pointer-events: none;
+  user-select: none;
+}
+
+.familia-container,
+.centroGestor-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: #f0f0f0;
+  padding: 0 0 40px 0;
+  min-height: 100vh;
+  z-index: 1;
+}
+
+.familia-container h2,
+.centroGestor-container h2 {
+  margin: 10px;
+  color: #38249b;
+  font-size: 32px;
+}
+
 /* error messages */
-.errorBtn,
-.error-message-style{
-  margin-bottom:2%; 
+.errorBtn{
+  margin-bottom:1%; 
   font-family: inherit; 
   font-size: 18px;
   text-align: center;
   color: rgb(221, 66, 66); 
 }
 
-.successBtn,
-.success-message-style{
-  margin-bottom:2%; 
+.successBtn{
+  margin-bottom:1%; 
   color: green; 
   font-size: 15px; 
   text-align: center;
@@ -93,9 +126,14 @@ app-sidebar {
 .subFamilias-add-btn,
 .download-btn,
 .search-button,
-.download-btn,
-.pagination-controls button,
-.save-btn,
+.add-centroGestor-btn,
+.styled-table button,
+.cancel-btn,
+.next-btn,
+.next-btn,
+.menu button,
+.services-btn,
+.cge-btn,
 .search-button-proveedores,
 .download-btn,
 .pag-btn,
@@ -108,14 +146,8 @@ app-sidebar {
 .delete-btn-articulos,
 .articulos-cancel-confirm-btn,
 .proveedor-saving-btn,
-.delete-btn-articulos,
-.delete-btn-personas,
-.articulos-delete-confirm-btn,
 .proveedor-cancel-btn,
-.delete-btn-articulos:hover,
-.delete-btn-personas:hover,
-.articulos-delete-confirm-btn:hover,
-.proveedor-cancel-btn:hover {
+.menu-panel button  {
   background-color: #1d4ed8;
   color: #fff;
   border: none;
@@ -138,9 +170,13 @@ app-sidebar {
 .familias-add-btn:hover,
 .sub-save-btn:hover,
 .subFamilias-add-btn:hover,
-.download-btn:hover,
-.pagination-controls button:hover,
-.save-btn:hover,
+.add-centroGestor-btn:hover,
+.search-button:hover,
+.styled-table button:hover,
+.next-btn:hover,
+.menu button:hover,
+.services-btn:hover,
+.cge-btn:hover,
 .search-button-proveedores:hover,
 .download-btn:hover,
 .pag-btn:hover,
@@ -150,7 +186,8 @@ app-sidebar {
 .Articulo-btn:hover,
 .save-btn-articulos:hover,
 .articulos-cancel-confirm-btn:hover,
-.proveedor-saving-btn:hover {
+.proveedor-saving-btn:hover,
+.menu-panel button:hover {
   background-color: #094fa3;
   color: #e6edf3;
 }
@@ -158,6 +195,7 @@ app-sidebar {
 .familia-delete-btn,
 .articulos-delete-confirm-btn,
 .sub-delete-btn,
+.cancel-btn,
 .delete-btn-articulos,
 .delete-btn-personas,
 .articulos-delete-confirm-btn,
@@ -168,6 +206,7 @@ app-sidebar {
 .familia-delete-btn:hover,
 .articulos-delete-confirm-btn:hover,
 .sub-delete-btn:hover,
+.cancel-btn:hover,
 .delete-btn-articulos:hover,
 .delete-btn-personas:hover,
 .articulos-delete-confirm-btn:hover,
@@ -175,11 +214,35 @@ app-sidebar {
   background-color: rgb(117, 28, 28);
 }
 
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 20px 0;
+  font-family: inherit;
+}
+
 .pagination-controls button:disabled,
-.pagination-controls button:disabled:hover{
+.pagination-controls button:disabled:hover {
   background-color: #ccc;
   cursor: not-allowed;
   color: #e5e7eb;
+}
+
+.pagination-controls span {
+  font-size: 15px;
+  color: #444;
+  font-family: inherit;
+}
+
+.pagination-input {
+  width: 48px;
+  padding: 4px 6px;
+  font-size: 15px;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  text-align: center;
+  margin: 0 4px;
 }
 
 /* modal */
@@ -231,4 +294,49 @@ app-sidebar {
   color: red;
   cursor: pointer;
   transition: color 0.2s;
+}
+
+/* 3 dots menu */
+.title-menu{
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.margin-title {
+  width: 97%;
+}
+.group-menu{
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #6c757d;
+  margin-top: 4px;
+}
+
+.menu-panel {
+  position: absolute;
+  top: 28px;
+  right: 0;
+  min-width: 190px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(17, 48, 71, 0.18);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 3000;
+  border: 1px solid rgba(28, 93, 140, 0.08);
 }

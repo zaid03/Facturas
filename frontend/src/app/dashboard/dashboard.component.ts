@@ -20,7 +20,8 @@ export class DashboardComponent implements OnInit {
   usucod: string | null = null;
   perfil: string | null = null;
   entcod: number | null = null;
-  cgecod: number | null = null;
+  public centroGestor: string = '';
+  public eje: number | null = null;
   allowedMnucods: string[] = [];
   esContable: boolean = false;
 
@@ -33,15 +34,21 @@ export class DashboardComponent implements OnInit {
     const rawPerfil  = sessionStorage.getItem('Perfil');
     const rawMnus    = sessionStorage.getItem('mnucods');
     const rawContable = sessionStorage.getItem('EsContable');
+    const rawEje = sessionStorage.getItem('EJERCICIO');
+    const rawCge = sessionStorage.getItem('CENTROGESTOR');
 
     const entidadObj = safeParse(rawEntidad);
     const perfilObj  = safeParse(rawPerfil);
     const ContableOBJ = safeParse(rawContable);
+    const ejeObs = safeParse(rawEje);
+    const cgeObs = safeParse(rawCge);
 
     this.usucod = sessionStorage.getItem('USUCOD');
     this.entcod = entidadObj.ENTCOD ?? null;
     this.perfil = perfilObj.PERCOD ?? null;
     this.esContable = ContableOBJ.value === true || ContableOBJ.value === 'true';
+    this.eje = ejeObs.eje ?? null;
+    this.centroGestor = cgeObs.value ?? null;
 
     if (!this.usucod || this.entcod == null || !this.perfil) {
       alert('Missing session data. reiniciar el flujo.');
@@ -93,7 +100,7 @@ export class DashboardComponent implements OnInit {
   }
 
   navigateTo(code: string): void {
-    if (this.isDisabled(code) && code !== 'familia') {
+    if (this.isDisabled(code) && code !== 'familia' && code !== 'centroGestor') {
       console.warn('Not allowed:', code);
       return;
     }
@@ -116,8 +123,15 @@ export class DashboardComponent implements OnInit {
       case 'familia':
         this.router.navigate(['/familia'])
         break;
+      case 'centroGestor':
+        this.router.navigate(['/centroGestor']);
+        break;
       default:
         console.warn('No route configured for code:', code);
     }
+  }
+
+  goToCge() {
+    this.router.navigate(['/centro-gestor']);
   }
 }
