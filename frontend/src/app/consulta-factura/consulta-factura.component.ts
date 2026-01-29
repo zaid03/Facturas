@@ -10,13 +10,14 @@ import autoTable from 'jspdf-autotable';
 import { environment } from '../../environments/environment';
 
 @Component({
-  selector: 'app-proveedorees',
+  selector: 'app-consulta-factura',
   standalone: true,
   imports: [ CommonModule ,FormsModule, SidebarComponent],
-  templateUrl: './facturas.component.html',
-  styleUrls: ['./facturas.component.css']
+  templateUrl: './consulta-factura.component.html',
+  styleUrls: ['./consulta-factura.component.css']
 })
-export class FacturasComponent {
+
+export class ConsultaFacturaComponent {
   //3 dots menu 
   showMenu = false;
   toggleMenu(event: MouseEvent): void {
@@ -247,24 +248,6 @@ export class FacturasComponent {
     }).format(Number(value));
   };
 
-  formatFacField(field: 'facimp' | 'faciec' | 'facidi') {
-    if (!this.selectedFacturas || this.selectedFacturas[field] === undefined || this.selectedFacturas[field] === null) return;
-    let raw = String(this.selectedFacturas[field]).trim();
-
-    raw = raw.replace(/[^\d.,-]/g, '');
-
-    if (raw.indexOf('.') > -1 && raw.indexOf(',') > -1) {
-      raw = raw.replace(/\./g, '').replace(',', '.');
-    } else if (raw.indexOf(',') > -1) {
-      raw = raw.replace(',', '.');
-    }
-
-    let num = parseFloat(raw);
-    if (!isNaN(num)) {
-      this.selectedFacturas[field] = num.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
-    }
-  }
-
   DownloadPDF() {
     this.limpiarMEssages();
 
@@ -429,8 +412,7 @@ export class FacturasComponent {
 
   showDetails(factura: any) {
     this.limpiarMEssages();
-    this.selectedFacturas = { ...factura };
-    ['facimp', 'faciec', 'facidi'].forEach(field => this.formatFacField(field as any));
+    this.selectedFacturas = factura;
     this.detailView = 'Albaranes';
     this.setAlbaranesOptio('albaranes', factura?.facnum);
   }
@@ -472,7 +454,7 @@ export class FacturasComponent {
   }
 
   //search functions
-  fechaTipo: 'registro' | 'factura' | 'contable' | 'Fecha' | '' = '';
+  fechaTipo: 'registro' | 'factura' | 'contable' | '' = '';
   estadoTipo: 'contabilizadas' | 'no-contabilizadas' | 'aplicadas' | 'sin-aplicadas' | '' = 'no-contabilizadas';
   fromDate: string = '';
   toDate: string = '';
@@ -656,7 +638,7 @@ export class FacturasComponent {
     this.isLoading = true;
 
     if ( option === 'albaranes') {
-      this.http.get<any>(`${environment.backendUrl}/api/alb/albaranes/${this.entcod}/${this.eje}/${facnum}`).subscribe({
+      this.http.get<any>(`${environment.backendUrl}/api/alb/${this.entcod}/${this.eje}/${facnum}`).subscribe({
         next: (response) => {
           if (!Array.isArray(response) || response.length === 0) {
             this.moreInfoMessageIsSuccess = true;

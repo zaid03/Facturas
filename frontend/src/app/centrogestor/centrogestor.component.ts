@@ -5,11 +5,6 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
-function safeParse(raw: string | null) {
-  if (!raw) return {};
-  try { return JSON.parse(raw); } catch { return {}; }
-}
-
 @Component({
   selector: 'app-centrogestor',
   standalone: true,
@@ -20,64 +15,65 @@ function safeParse(raw: string | null) {
 export class CentrogestorComponent implements OnInit {
   tableData: any[] = [];
   loading = false;
+  perfil: string | null = null;
+  usucod: string | null = null;
+  entcod: string | null = null;
+  eje: number | null = null;
+  cge: string = '';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void {
-    const USUCOD = sessionStorage.getItem('USUCOD');
-    const entObj = safeParse(sessionStorage.getItem('Entidad'));
-    const perObj = safeParse(sessionStorage.getItem('Perfil'));
-    const ejeObj = safeParse(sessionStorage.getItem('EJERCICIO'));
+    const profile = sessionStorage.getItem('Perfil');
+    const ent = sessionStorage.getItem('Entidad');
+    const session = sessionStorage.getItem('EJERCICIO');
+    const centroGestor = sessionStorage.getItem('CENTROGESTOR');
+    const user = sessionStorage.getItem('USUCOD');
 
-    const ENTCOD = entObj.ENTCOD;
-    const PERCOD = perObj.PERCOD;
-    const EJE = ejeObj.eje;
-
-    if (!USUCOD) { this.fail('/login','Login required'); return; }
-    if (ENTCOD == null) { this.fail('/ent','Entidad missing'); return; }
-    if (PERCOD == null) { this.fail('/ent','Perfil missing'); return; }
-    if (EJE == null)    { this.fail('/eje','Ejercicio missing'); return; }
+    if (profile) { const parsed = JSON.parse(profile); this.perfil = parsed.PERCOD;}
+    if (ent) { const parsed = JSON.parse(ent); this.entcod = parsed.ENTCOD;}
+    if (session) { const parsed = JSON.parse(session); this.eje = parsed.eje;}
+    if (centroGestor) { const parsed = JSON.parse(centroGestor); this.cge = parsed.value;}
+    if (user) {this.usucod = user}
 
     this.loading = true;
-    this.http.get<any[]>(`${environment.backendUrl}/api/centrogestor/percod/${PERCOD}/ent/${ENTCOD}/eje/${EJE}`)
-      .subscribe({
-        next: resp => {
-          if (resp?.length > 1) {
-            this.tableData = resp;
-          } else if (resp?.length === 1) {
-            this.storeAndGo(resp[0]);
-          } else {
-            // Proceed with null center (business decision)
-            sessionStorage.setItem('CENTROGESTOR', JSON.stringify({ value: null}));
-            sessionStorage.setItem('CENTROGESTOR_NAME', JSON.stringify({ value: null}));
-            sessionStorage.setItem('ESTADOGC', JSON.stringify({ value: 0}));
-            sessionStorage.setItem('EsContable', JSON.stringify({ value: false}));
-            this.router.navigate(['/dashboard']);
-          }
-        },
-        error: err => {
-          console.error('CentroGestor error', err);
-          alert('Error cargando centro gestor.');
+    this.fetchSwVarables();
+    this.fetchMenus();
+    this.http.get<any[]>(`${environment.backendUrl}/api/cge/${this.entcod}/${this.eje}/${this.usucod}`)
+    .subscribe({
+      next: resp => {
+        if (resp?.length > 1) {
+          this.tableData = resp;
+        } else if (resp?.length === 1) {
+          this.storeAndGo(resp[0]);
+        } else {
+          sessionStorage.setItem('CENTROGESTOR', JSON.stringify({ value: null}));
+          sessionStorage.setItem('CENTROGESTOR_NAME', JSON.stringify({ value: null}));
+          sessionStorage.setItem('ESTADOGC', JSON.stringify({ value: 0}));
+          sessionStorage.setItem('EsContable', JSON.stringify({value: false}));
+          sessionStorage.setItem('EsComprador', JSON.stringify({value: false}));
+          sessionStorage.setItem('EsAlmacen', JSON.stringify({value : false}));
           this.router.navigate(['/dashboard']);
         }
-      }).add(() => this.loading = false);
-  }
-
-  private fail(route: string, msg: string) {
-    alert(msg);
-    this.router.navigate([route]);
+      },
+      error: err => {
+        console.error('CentroGestor error', err);
+        alert('Error cargando centro gestor.');
+        this.router.navigate(['/dashboard']);
+      }
+    }).add(() => this.loading = false);
   }
 
   private storeAndGo(item: any) {
-    sessionStorage.setItem('CENTROGESTOR', JSON.stringify({ value: item[0] }));
-    if (item[1] === 1) {
-      sessionStorage.setItem('EsContable', JSON.stringify({ value: true}));
-    }
-    if (item[1] === 0){
-      sessionStorage.setItem('EsContable', JSON.stringify({ value: false}));
-    }
-    sessionStorage.setItem('CENTROGESTOR_NAME', JSON.stringify({ value: item[2]}));
-    sessionStorage.setItem('ESTADOGC', JSON.stringify({ value: item[3]}));
+    sessionStorage.setItem('CENTROGESTOR', JSON.stringify({ value: item.cge.cgecod }));
+    sessionStorage.setItem('CENTROGESTOR_NAME', JSON.stringify({ value: item.cge.cgedes}));
+    sessionStorage.setItem('ESTADOGC', JSON.stringify({ value: item.cge.cgecic}));
+    if (item.depint === 1) { sessionStorage.setItem('EsContable', JSON.stringify({ value: true})); }
+    if (item.depint === 0){ sessionStorage.setItem('EsContable', JSON.stringify({ value: false})); }
+    if (item.depalm === 1) { sessionStorage.setItem('EsAlmacen', JSON.stringify({ value: true})); }
+    if (item.depalm === 0){ sessionStorage.setItem('EsAlmacen', JSON.stringify({ value: false})); }
+    if (item.depcom === 1) { sessionStorage.setItem('EsComprador', JSON.stringify({ value: true})); }
+    if (item.depcom === 0){ sessionStorage.setItem('EsComprador', JSON.stringify({ value: false})); }
     this.router.navigate(['/dashboard']);
   }
 
@@ -96,6 +92,42 @@ export class CentrogestorComponent implements OnInit {
     sessionStorage.setItem('CENTROGESTOR_NAME', JSON.stringify({ value: null}));
     sessionStorage.setItem('ESTADOGC', JSON.stringify({ value: 0}));
     sessionStorage.setItem('EsContable', JSON.stringify({ value: false}));
+    sessionStorage.setItem('EsComprador', JSON.stringify({value: false}));
+    sessionStorage.setItem('EsAlmacen', JSON.stringify({value : false}));
     this.router.navigate(['/dashboard']);
+  }
+
+  sicalVariables: any = [];
+  fetchSwVarables() {
+    this.http.get(`${environment.backendUrl}/api/ayt/fetch-all/${this.entcod}`).subscribe({
+      next: (res) => {
+        this.sicalVariables = res;
+        if (this.sicalVariables === 0) {
+          alert("Faltan parámetros para conectar los WS en la configuración");
+          this.router.navigate(['/']);
+        }
+        
+        sessionStorage.setItem('WSORG', JSON.stringify({ WSORG: this.sicalVariables[0].ent_ORG}));
+        sessionStorage.setItem('WSENT', JSON.stringify({ WSENT: this.sicalVariables[0].ent_COD }));
+      },
+      error: (err) => {
+        alert("Server error");
+        this.router.navigate(['/']);
+      }
+    })
+  }
+
+  fetchMenus() {
+    if(this.perfil === ''){return;}
+    this.http.get<any[]>(`${environment.backendUrl}/api/mnucods`, { 
+    params: { PERCOD: this.perfil || '' } })
+    .subscribe({
+      next: resp => {
+        sessionStorage.setItem('mnucods', JSON.stringify(resp));
+      },
+      error: err => {
+        console.warn("Los menús no se encuentran por ninguna parte.");
+      }
+    });
   }
 }

@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-ent',
@@ -15,65 +17,65 @@ import { environment } from '../../environments/environment';
 export class EntComponent implements OnInit {
   tableData: any[] = [];
   loading = false;
-  errorMsg = '';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   ngOnInit(): void{
     const USUCOD = sessionStorage.getItem('USUCOD');
     if (!USUCOD) {
-      alert('No session. Login.');
-      this.router.navigate(['/login']);
+      alert('no hay sesión');
+      this.logout();
       return;
     }
 
-    this.http.get<any>(`${environment.backendUrl}/api/filter`, { params: { usucod: USUCOD } }).subscribe({
-      next: (filterResponse) => {
-        if (filterResponse.error) {
-          this.errorMsg = 'server error';
-          this.router.navigate(['/login']);
-          return;
-        } 
-        if (Array.isArray(filterResponse) && filterResponse.length > 1) {
-          this.tableData = filterResponse;            
-        } else if (Array.isArray(filterResponse) && filterResponse.length === 1) {
-          const row = filterResponse[0];
-          this.tableData = [row];
-          this.selectRow(row);
-        } else {
-          this.errorMsg = 'No data returned for user.';
-          sessionStorage.clear();
-          this.router.navigate(['/']);
-        }
+    this.http.get<any[]>(`${environment.backendUrl}/api/pua/filter/${USUCOD}`).subscribe({
+      next: (res) => {
+
+        const requests = res.map(item =>
+          this.http.get<{ entnom: string }>(`${environment.backendUrl}/api/ent/name/${item.entcod}`).pipe(
+            map(res => ({...item, entnom: res.entnom})),
+            catchError(() => of({...item, entnom: null}))
+          )
+        );
+        forkJoin(requests).subscribe({
+          next: (entidadesConNombre) => {
+            if (Array.isArray(entidadesConNombre) && res.length > 1) {
+              this.tableData = entidadesConNombre;            
+            }  else if (Array.isArray(res) && res.length === 1) {
+              const row = res[0];
+              this.tableData = [row];
+              this.selectRow(row);
+            } else {
+              this.logout();
+            }
+          }
+        })
       },
       error: (err) => {
-        this.errorMsg = err?.error ?? 'Error loading data.';
+        this.logout();
       }
     });
   }
   
   selectRow(t: any): void {
-
     sessionStorage.setItem('Entidad', JSON.stringify({ ENTCOD: t.entcod }));
     sessionStorage.setItem('Perfil', JSON.stringify({ PERCOD: t.percod }));
-
-    this.loading = true;
-    this.http.get<any[]>(`${environment.backendUrl}/api/mnucods`, { params: { PERCOD: t.percod } })
-      .subscribe({
-        next: resp => {
-          sessionStorage.setItem('mnucods', JSON.stringify(resp));
-          this.router.navigate(['/eje']);
-        },
-        error: err => {
-          console.error('mnucods error status:', err.status, 'body:', err.error);
-          if (err.status === 401) {
-            alert('Sesión expirada o token inválido. Inicie sesión nuevamente.');
-            this.router.navigate(['/login']);
-          } else {
-            alert('Error loading menus.');
-          }
-        }
-      }).add(() => this.loading = false);
+    this.router.navigate(['/eje']);
   }
 
+  logout(): void {
+    sessionStorage.setItem('fromLogout', 'true');
+    localStorage.setItem('fromLogout', 'true');
+    sessionStorage.clear();
+    const casLogoutUrl = `${environment.casLoginUrl.replace('/login', '/logout')}`;
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = casLogoutUrl;
+    document.body.appendChild(iframe);
+    
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+      window.location.href = `${environment.frontendUrl}/login`;
+    }, 1000);
+  }
 }

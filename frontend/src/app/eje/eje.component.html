@@ -9,15 +9,13 @@
       </thead>
       <tbody>
         <tr *ngFor="let e of tableData">
-          <td>{{ e }}</td>
+          <td>{{ e.eje }}</td>
           <td>
             <button (click)="selectRow(e)">Seleccionar</button>
           </td>
         </tr>
       </tbody>
     </table>  
-    <div *ngIf="!tableData.length && !loading" class="errorBtn">Sin ejercicios para mostrar.</div>
-    <div *ngIf="loading">Cargando...</div>
-    <button class="cancel-btn" (click)="cancelar()">Volver</button>
+    <div *ngIf="loading" class="color">Cargando...</div>
   </div>
 </div>
