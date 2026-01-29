@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { CentrogestorComponent } from './centrogestor/centrogestor.component';
 import { EjeComponent } from './eje/eje.component';
 import { FacturasComponent } from './facturas/facturas.component';
+import { ConsultaFacturaComponent } from './consulta-factura/consulta-factura.component';
 import { NgModule } from '@angular/core';
 
 export const routes: Routes = [
@@ -14,6 +15,7 @@ export const routes: Routes = [
     { path: 'eje', component: EjeComponent},
     { path: 'centro-gestor', component: CentrogestorComponent},
     { path: 'facturas', component: FacturasComponent},
+    { path: 'Cfactura', component: ConsultaFacturaComponent},
     { path: '', redirectTo: '/login', pathMatch: 'full' }, //route by default
 ];
 
